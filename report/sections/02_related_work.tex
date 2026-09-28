@@ -1,0 +1,54 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Knowledge Tracing Models}
+Bayesian Knowledge Tracing (BKT) models mastery of each skill with a
+two-state hidden Markov model~\cite{corbett1994bkt}. Deep Knowledge
+Tracing (DKT) replaced this with a recurrent neural network, improving
+predictive accuracy at the cost of per-skill interpretability~%
+\cite{piech2015dkt}. Attention-based models followed: SAKT applies
+self-attention over the interaction sequence~\cite{pandey2019sakt}, and
+AKT introduces a monotonic attention mechanism with a
+Rasch-model-based embedding~\cite{ghosh2020akt}. More recently, simpleKT
+was proposed as a strong yet simple baseline that is difficult to beat
+across domains~\cite{liu2023simplekt}. The pyKT toolkit provides
+standardised preprocessing and reference implementations of these models
+across several public datasets, enabling transparent
+comparison~\cite{liu2022pykt}.
+% \note{These four (DKT, SAKT, AKT, simpleKT) are your RO1 baselines.}
+
+\subsection{Programming Knowledge Tracing}
+A growing line of work adapts KT to programming, where each interaction
+carries source code rather than only a correctness label. Code-DKT
+extends DKT with an attention mechanism that extracts domain-specific
+code features~\cite{shi2022codedkt}. Other work interacts programming
+skills with student code representations such as code2vec and
+ASTNN~\cite{pktattn2021}. Test-case-informed KT (TIKTOC) incorporates
+fine-grained test-case outcomes for open-ended coding
+tasks~\cite{tiktoc2025}. KCGen-KT automatically generates knowledge
+components from solution ASTs and traces them~\cite{kcgenkt2026}.
+HELP-DKT models introductory Python programming with an interpretable
+cognitive model built on deep knowledge tracing~\cite{helpdkt2022}. Our proposed variant (Section~%
+\ref{sec:methodology}) builds on this direction by combining
+knowledge-component tags with code-structure features on top of a strong
+attention baseline.
+
+\subsection{KT as a Simulator for Instructional Sequencing}
+Beyond prediction, KT models are increasingly used as simulators of
+learners to train or evaluate instructional-sequencing
+policies~\cite{piech2015dkt}. Reinforcement-learning approaches optimise
+sequencing against such simulators, and recent work (e.g., multi-step
+simulator training) aims to make these simulators more robust. However,
+the coupling between a model's predictive accuracy and its usefulness as
+a sequencing simulator is known to be weak in general KT and largely
+unexamined for programming---the gap this work targets.
+% \todo{Add AdvKT / RL-DKT / deep-RL sequencing citations to references.bib and cite here.}
+
+\subsection{Public Datasets}
+For programming, the CodeWorkout dataset from the CSEDM 2021 Data
+Challenge provides Java CS1 submissions to 50 problems with
+knowledge-component tags~\cite{csedm2021}. FalconCode provides a
+multi-year corpus of introductory Python submissions with per-problem
+skills and test cases~\cite{falconcode2023}. For the mathematics
+contrast we use ASSISTments / Junyi as provided by
+pyKT~\cite{liu2022pykt}.

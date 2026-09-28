@@ -1,0 +1,74 @@
+\section{Datasets}
+\label{sec:datasets}
+
+We use published datasets only; no data is self-collected. Table~%
+\ref{tab:datasets} summarises the datasets and their programming-specific
+signals.
+
+\begin{table}[t]
+\caption{Datasets used in this study.}
+\label{tab:datasets}
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Dataset} & \textbf{Domain} & \textbf{KC tags} & \textbf{Code} \\
+\midrule
+CodeWorkout (CSEDM'21) & Java CS1     & Yes & Yes \\
+FalconCode            & Python intro & Yes & Yes \\
+Code.org (optional)   & Blocks       & Partial & Partial \\
+ASSISTments / Junyi   & Mathematics  & Yes & No  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{CodeWorkout (CSEDM 2021)}
+Collected from a CS1 course over two semesters (Spring and Fall~2019),
+with 329 and 490 students respectively completing the course; each
+semester contains 65{,}000+ code submissions across 50 Java coding
+problems, each requiring roughly 10--26 lines of
+code~\cite{csedm2021}. It is distributed in the ProgSnap2 format and
+includes knowledge-component tags, making it our primary programming
+dataset.
+
+\subsection{FalconCode}
+A multi-year dataset of introductory Python programming containing over
+1.5 million code submissions from more than 2{,}000 undergraduate
+students across 800+ assignments, with prompts, test cases, and
+per-problem skills~\cite{falconcode2023}. It serves as our second
+programming dataset for cross-dataset generalisation.
+
+\subsection{Mathematics Contrast}
+For the cross-domain comparison we use a standard mathematics KT dataset
+(ASSISTments or Junyi) as preprocessed by pyKT~\cite{liu2022pykt}, which
+provides KC tags but no code signal.
+
+\subsection{Preprocessing and Splits}
+All datasets are standardised into a common interaction format
+(\texttt{student\_id}, \texttt{problem\_id}, \texttt{kc\_id},
+\texttt{correct}, \texttt{code}). We adopt student-level
+cross-validation (5-fold) so that no student appears in both training and
+test folds, and we guard against the known label-leakage pitfall in KT
+evaluation. The exact per-dataset counts after filtering (retained
+students, interactions, KCs, and the sequence-length cap) are reported in
+Table~\ref{tab:datastats} once preprocessing is finalised; the
+dataset-level totals above are taken from the original data
+releases~\cite{csedm2021,falconcode2023}.
+
+\begin{table}[t]
+\caption{Dataset-level statistics from the original public
+releases~\cite{csedm2021,falconcode2023}. Counts are approximate and
+reflect the released data before any project-specific filtering.}
+\label{tab:datastats}
+\centering
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\textbf{Dataset} & \textbf{Students} & \textbf{Submissions}
+                 & \textbf{Problems} \\
+\midrule
+CodeWorkout & $819$      & $130{,}000+$ & $50$ \\
+FalconCode  & $2{,}000+$ & $1{,}500{,}000+$ & $800+$ \\
+\bottomrule
+\end{tabular}
+\end{table}

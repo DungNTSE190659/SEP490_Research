@@ -1,0 +1,133 @@
+\section{Experimental Setup}
+\label{sec:experiments}
+
+\subsection{Implementation}
+% \todo{Fill in: framework (PyTorch), pyKT version/commit, hardware (GPU),
+% and the public repository URL for the reproducible benchmark.}
+All models are implemented in PyTorch on top of the pyKT
+toolkit~\cite{liu2022pykt}. Code and configurations are released for
+reproducibility.
+
+\subsection{Hyperparameters}
+Models are trained with the Adam optimiser and binary cross-entropy loss,
+with early stopping (patience~10 epochs, maximum~50) on a validation split
+and a maximum sequence length of~200. Hyperparameters are selected by
+searching the grid in Table~\ref{tab:hparams}; the final column lists the
+values used for the proposed model. \emph{Note:} the final values follow
+common practice for the attention baseline and may be re-tuned per dataset.
+
+\begin{table}[t]
+\caption{Hyperparameter search grid and final values for the proposed
+model. Re-tune per dataset if needed.}
+\label{tab:hparams}
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Search grid} & \textbf{Final} \\
+\midrule
+Embedding size    & $\{64, 128, 256\}$        & $256$ \\
+Hidden size       & $\{64, 128, 256\}$        & $256$ \\
+Attention heads   & $\{4, 8\}$                & $8$ \\
+Attention blocks  & $\{1, 2\}$                & $2$ \\
+Dropout           & $\{0.1, 0.2, 0.3\}$       & $0.2$ \\
+Learning rate     & $\{10^{-3}, 10^{-4}\}$    & $10^{-4}$ \\
+Batch size        & $\{32, 64\}$              & $32$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Evaluation Protocol}
+We use 5-fold student-level cross-validation. Metrics are AUC, RMSE, and
+accuracy for prediction; and the sequencing-utility metric defined in
+Section~\ref{sec:sequencing} for downstream evaluation. We report means
+and standard deviations, and test significance with paired tests across
+folds together with effect sizes.
+
+\subsection{Research Questions Restated}
+\begin{itemize}
+  \item \textbf{RQ(a):} Do KC/code-structure-aware models predict mastery
+        more accurately than response-only models?
+  \item \textbf{RQ(b):} Do accuracy gains translate into better
+        next-exercise sequencing?
+  \item \textbf{RQ(gen):} How well do findings generalise across datasets
+        and relative to the mathematics domain?
+\end{itemize}
+
+\subsection{Experimental Hypotheses}
+\label{sec:hypotheses}
+We state falsifiable hypotheses for each research question, together with
+the test used and the decision criterion. Unless otherwise noted, tests
+are two-sided at significance level $\alpha = 0.05$, computed over the
+five cross-validation folds, and we report an effect size alongside each
+$p$-value. Here $\mathrm{AUC}_{\text{full}}$ denotes the AUC of the full
+proposed model (response~+~KC~+~code), and $\mathrm{AUC}_{\text{resp}}$
+that of the strongest response-only baseline.
+
+\begin{itemize}
+  \item \textbf{H1 (prediction; addresses RQ(a)).}
+        The full model predicts more accurately than the best
+        response-only baseline:
+        $\mathrm{AUC}_{\text{full}} > \mathrm{AUC}_{\text{resp}}$.
+        \textit{Null} $H1_0$: $\mathrm{AUC}_{\text{full}} \leq
+        \mathrm{AUC}_{\text{resp}}$.
+        \textit{Test}: paired $t$-test (or Wilcoxon signed-rank) across
+        folds on per-fold AUC; effect size Cohen's $d$.
+
+  \item \textbf{H1a (ablation; addresses RQ(a)).}
+        Each signal contributes positively: both the $+$KC and the
+        $+$code variants improve over the response-only baseline, and the
+        combined model is no worse than either single-signal variant.
+        \textit{Test}: paired comparisons across folds with
+        Holm--Bonferroni correction for multiple comparisons.
+
+  \item \textbf{H2 (sequencing; addresses RQ(b)).}
+        The full model yields higher offline sequencing utility
+        $U$ than the best response-only baseline:
+        $U_{\text{full}} > U_{\text{resp}}$.
+        \textit{Null} $H2_0$: $U_{\text{full}} \leq U_{\text{resp}}$.
+        \textit{Test}: paired test across folds on per-fold utility;
+        effect size reported.
+
+  \item \textbf{H3 (accuracy--utility coupling; core of RQ(b)).}
+        Across all models, predictive accuracy and sequencing utility are
+        positively correlated:
+        $\rho(\mathrm{AUC}, U) > 0$.
+        \textit{Null} $H3_0$: $\rho \leq 0$.
+        \textit{Test}: Pearson and Spearman correlation over the set of
+        models, with a bootstrap confidence interval on $\rho$.
+        A weak or non-significant $\rho$ is itself a substantive
+        finding: it would indicate that accuracy gains do \emph{not}
+        reliably translate into better sequencing.
+
+  \item \textbf{H4 (cross-dataset generalisation; addresses RQ(gen)).}
+        A model trained on one programming dataset and tested on another
+        retains predictive skill above chance
+        ($\mathrm{AUC} > 0.5$), though we expect a drop relative to
+        within-dataset performance.
+
+  \item \textbf{H5 (cross-domain contrast; addresses RQ(gen)).}
+        The benefit of programming-specific signals (KC~+~code) is larger
+        on programming datasets than any transferable benefit observed
+        when contrasting with the mathematics domain, where the
+        code-structure signal is unavailable.
+\end{itemize}
+
+Table~\ref{tab:hyp-map} maps each hypothesis to the results table that
+tests it.
+
+\begin{table}[t]
+\caption{Mapping of hypotheses to results.}
+\label{tab:hyp-map}
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Hypothesis} & \textbf{Research question} & \textbf{Evidence in} \\
+\midrule
+H1, H1a & RQ(a)   & Table~\ref{tab:prediction} \\
+H2, H3  & RQ(b)   & Table~\ref{tab:sequencing} \\
+H4, H5  & RQ(gen) & Table~\ref{tab:transfer} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,24 @@
+\begin{abstract}
+Knowledge tracing (KT) underpins adaptive learning engines, yet most KT
+research targets the mathematics domain, leaving the
+programming/algorithm-learning domain comparatively under-studied.
+Furthermore, KT work overwhelmingly optimises next-step prediction
+accuracy (AUC), while the link between predictive accuracy and the
+quality of the downstream instructional decision---which exercise to
+give next---remains weakly established, and is largely unexamined for
+programming. This work investigates, for programming-concept learning,
+whether KT models that exploit programming-specific signals
+(knowledge-component tags and code-structure features derived from
+abstract syntax trees) (a)~predict learner mastery more accurately than
+response-only models, and (b)~whether any accuracy gains translate into
+better next-exercise sequencing. We build a reproducible programming-KT
+evaluation pipeline over multiple public datasets (CodeWorkout,
+FalconCode) with standard baselines (DKT, SAKT, AKT, simpleKT),
+implement a knowledge-component / code-structure-aware variant on top of
+a strong baseline, and evaluate both predictive accuracy (AUC, RMSE) and
+downstream sequencing utility via offline policy evaluation. We further
+analyse the correlation between predictive accuracy and sequencing
+utility, and assess cross-dataset and cross-domain (programming vs.
+mathematics) generalisation.
+% \todo{Fill in headline quantitative results once experiments are done.}
+\end{abstract}

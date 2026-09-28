@@ -1,0 +1,26 @@
+\section{Threats to Validity}
+\label{sec:threats}
+
+\paragraph{Construct validity: KT-as-simulator}
+Our sequencing-utility evaluation relies on a trained KT model acting as
+a learner simulator. Such simulators are imperfect proxies for real
+learners, and offline policy evaluation can be biased when the logged
+policy differs from the evaluated one. We mitigate this with robustness
+checks (multiple simulators, sensitivity analysis) and interpret
+sequencing results as offline evidence rather than deployment guarantees.
+
+\paragraph{Internal validity: leakage and splits}
+KT evaluation is susceptible to label leakage and to student overlap
+between train and test. We use student-level cross-validation and follow
+established preprocessing to reduce these risks.
+
+\paragraph{External validity: dataset and domain scope}
+Findings are drawn from a limited set of public programming datasets
+(primarily CS1 Java and intro Python) and one mathematics contrast; they
+may not transfer to other languages, levels, or populations.
+
+\paragraph{Reproducibility}
+% \todo{Confirm released code, fixed seeds, and environment specification.}
+We release code, configurations, and fixed random seeds; any AI
+assistance and third-party models/datasets are declared with usage
+evidence per the RBL submission guideline.

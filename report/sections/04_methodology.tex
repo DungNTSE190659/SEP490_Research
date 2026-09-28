@@ -1,0 +1,141 @@
+\section{Methodology}
+\label{sec:methodology}
+
+Our methodology follows five steps aligned with the research objectives:
+(1)~standardise the datasets and reproduce response-only KT baselines
+(RO1); (2)~implement the proposed knowledge-component (KC) /
+code-structure-aware variant (RO2); (3)~measure prediction accuracy under
+student-level cross-validation (RO3); (4)~measure downstream sequencing
+utility and its correlation with prediction (RO4); and (5)~test
+cross-dataset and cross-domain transfer (RO5). The selected model and
+policy are the ones the AlgoVenture adaptive engine adopts for mastery
+estimation (UC6) and next-exercise sequencing (UC7).
+
+% =====================================================================
+\subsection{Problem Formulation}
+\label{sec:formulation}
+We keep only the one equation needed to state precisely what a KT model
+predicts and where the programming signals enter. For a learner, the
+interaction sequence is $\{(q_t, c_t, r_t, s_t)\}_{t=1}^{T}$: at step $t$
+the learner attempts problem $q_t$, tagged with knowledge components
+$c_t$, with response $r_t \in \{0,1\}$ (1 = correct) and submitted source
+code $s_t$. The task is to predict the next response,
+\begin{equation}
+\hat{r}_{t+1} = P\big(r_{t+1}=1 \mid q_{t+1}, c_{t+1},\,
+                       \text{history}_{1:t}\big).
+\label{eq:kt-task}
+\end{equation}
+\emph{What this solves:} it fixes the prediction target used by every
+model in the study, so baselines and our variant are compared on exactly
+the same quantity. Response-only baselines use only $(q,c,r)$ in the
+history; our variant additionally uses the code $s$.
+
+% =====================================================================
+\subsection{Pipeline and Baselines (RO1)}
+\label{sec:pipeline}
+We build a reproducible pipeline on top of the pyKT
+toolkit~\cite{liu2022pykt}, which provides standardised preprocessing and
+reference implementations, so that measured differences reflect the model
+rather than the data plumbing. The response-only baselines are
+DKT~\cite{piech2015dkt}, SAKT~\cite{pandey2019sakt},
+AKT~\cite{ghosh2020akt}, and simpleKT~\cite{liu2023simplekt};
+BKT~\cite{corbett1994bkt} is a classical reference. This baseline set is
+also the promotion gate for the product: a KT model is only adopted by
+the app after being evaluated against these baselines on AUC/RMSE.
+
+% =====================================================================
+\subsection{Proposed KC / Code-Structure-Aware Model (RO2)}
+\label{sec:model}
+We extend a strong attention baseline (AKT or simpleKT) with two extra
+input channels, described in words rather than layer-by-layer equations:
+
+\begin{itemize}
+  \item \textbf{Knowledge-component channel:} an embedding of the KC
+        tag(s) of the current problem. \emph{Why:} it lets the model share
+        evidence across problems that exercise the same concept, instead
+        of treating each problem in isolation.
+  \item \textbf{Code-structure channel:} a fixed-length feature vector
+        built from the abstract syntax tree (AST) of the submitted code
+        (counts and nesting depths of loops, conditionals, calls, etc.),
+        or a learned code embedding. \emph{Why:} two submissions can both
+        be ``wrong'' yet reveal very different misconceptions; code
+        structure exposes that signal, which a correct/incorrect label
+        hides.
+\end{itemize}
+
+The two channels are combined with the base model's interaction
+embedding by a simple fusion (concatenation with a linear projection, or
+a gated sum), and the base attention model then predicts
+$\hat{r}_{t+1}$ as in Eq.~\eqref{eq:kt-task}. We deliberately keep the
+fusion simple so that any measured gain is attributable to the
+\emph{signals} (KC, code) rather than to a more complex predictor.
+
+\paragraph{Ablations.}
+To isolate each signal we run four configurations: (i)~response-only;
+(ii)~response~+~KC; (iii)~response~+~code; and (iv)~the full model
+(response~+~KC~+~code). Comparing (ii) and (iii) against (i) isolates each
+signal; comparing (iv) against them tests whether the signals are
+complementary. This is the direct evidence for hypothesis~H1a.
+
+% =====================================================================
+\subsection{Prediction Evaluation (RO3)}
+\label{sec:pred-eval}
+We report AUC, RMSE, and accuracy under 5-fold \emph{student-level}
+cross-validation, so no student appears in both training and test folds
+(guarding against the label-leakage pitfall discussed in
+Section~\ref{sec:threats}). We report mean and standard deviation across
+folds and test significance with paired tests plus effect sizes
+(hypotheses~H1, H1a).
+
+% =====================================================================
+\subsection{Sequencing-Utility Evaluation (RO4)}
+\label{sec:sequencing}
+This is the core of the study: does a more accurate predictor actually
+sequence exercises better? We evaluate sequencing offline, using a
+trained KT model as a learner simulator. A policy $\pi$ repeatedly picks
+the next problem, the simulator returns a predicted response, and the
+state updates. We summarise a run by the utility $U$---the expected
+mastery gain over a horizon of $H$ recommendations:
+\begin{equation}
+U(\pi) = \mathbb{E}\big[\, m_{H} - m_{0} \,\big],
+\label{eq:utility}
+\end{equation}
+where $m_0$ and $m_H$ are estimated mastery before and after the
+sequence. \emph{What this solves:} it turns ``good teaching'' into one
+comparable number per model, so we can line utility up against accuracy.
+Algorithm~\ref{alg:seq} states the procedure.
+
+\begin{algorithm}[t]
+\caption{Offline sequencing-utility evaluation}
+\label{alg:seq}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} KT simulator $M$, policy $\pi$, horizon $H$,
+       start states $\mathcal{S}$
+\STATE $U \gets 0$
+\FORALL{start state $z_0 \in \mathcal{S}$}
+  \STATE $m_0 \gets \textsc{Mastery}(M, z_0)$;\quad $z \gets z_0$
+  \FOR{$h = 1$ \TO $H$}
+    \STATE $q \gets \pi(z)$;\quad $r \gets M(z, q)$;\quad
+           $z \gets \textsc{Update}(z, q, r)$
+  \ENDFOR
+  \STATE $U \gets U + \big(\textsc{Mastery}(M, z) - m_0\big)$
+\ENDFOR
+\STATE \textbf{return} $U / |\mathcal{S}|$
+\end{algorithmic}
+\end{algorithm}
+
+We then correlate each model's predictive accuracy with its sequencing
+utility (Pearson and Spearman, with a bootstrap confidence interval),
+which directly answers research question~(b) and tests hypothesis~H3.
+Because a KT simulator is an imperfect proxy for real learners, we add
+robustness checks (multiple simulators, sensitivity to $H$) and read
+utility as offline evidence, not a deployment guarantee
+(Section~\ref{sec:threats}).
+
+% =====================================================================
+\subsection{Generalisation Evaluation (RO5)}
+\label{sec:gen-eval}
+We test cross-dataset transfer (train on one programming dataset, test on
+another) and cross-domain transfer (programming vs.\ mathematics),
+reporting transfer AUC against the within-dataset reference so the size of
+any drop is visible (hypotheses~H4, H5).

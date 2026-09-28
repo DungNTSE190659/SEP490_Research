@@ -1,0 +1,83 @@
+%=====================================================================
+% Programming Knowledge Tracing: Prediction vs. Sequencing Utility
+% RBL Report -- IEEE Conference template (IEEEtran)
+%
+% Compile on Overleaf:
+%   - Menu > Settings > Compiler = pdfLaTeX
+%   - Main document = main.tex
+%   - Bibliography auto-runs via biblatex/bibtex (see below)
+%
+% This skeleton uses the classic \bibliography{} (BibTeX) flow, which is
+% the most robust default on Overleaf for IEEEtran.
+%=====================================================================
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% ----- Encoding -----
+% Author names are written without Vietnamese diacritics to avoid any
+% font/encoding issues under pdfLaTeX, so only utf8 input is needed.
+\usepackage[utf8]{inputenc}
+
+% ----- Packages -----
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}     % provides the floating "algorithm" environment
+\usepackage{algorithmic}   % provides \STATE, \FOR, \COMMENT, etc.
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}     % nicer tables (\toprule, \midrule, \bottomrule)
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{pgfplots}      % native LaTeX charts (no external image needed)
+\pgfplotsset{compat=1.17}
+\usepackage[hidelinks]{hyperref}
+
+% ----- Editing helpers (remove before final submission) -----
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\note}[1]{\textcolor{blue}{[note: #1]}}
+
+\begin{document}
+
+% =====================================================================
+\title{Programming Knowledge Tracing with Knowledge-Component and
+Code-Structure Signals: Does Predictive Accuracy Translate into Better
+Exercise Sequencing?}
+
+\author{
+\IEEEauthorblockN{FPT University, Ho Chi Minh City, Vietnam}
+\IEEEauthorblockA{
+Supervisor: Lai Duc Hung \\[2pt]
+Student: Nguyen Ho Nhat Minh -- SE190651 \\
+Student: Nguyen Tan Dung -- SE190659 \\
+Student: Phan Hoang Son -- SE184496 \\
+Student: Vo Dinh Linh -- SE181756}
+}
+
+\maketitle
+
+% ----- Abstract & keywords -----
+\input{sections/00_abstract}
+
+\begin{IEEEkeywords}
+knowledge tracing, programming education, knowledge components,
+code structure, abstract syntax tree, adaptive learning,
+instructional sequencing, offline policy evaluation
+\end{IEEEkeywords}
+
+% =====================================================================
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_datasets}
+\input{sections/04_methodology}
+\input{sections/05_experiments}
+\input{sections/06_results_discussion}
+\input{sections/07_threats}
+\input{sections/08_conclusion}
+
+% =====================================================================
+% Bibliography
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,102 @@
+\section{Introduction}
+\label{sec:intro}
+
+% ---------------------------------------------------------------------
+% Paragraph 1: Motivation -- KT is the core of adaptive learning.
+% ---------------------------------------------------------------------
+Knowledge tracing (KT) is the task of modelling a learner's evolving
+knowledge state from their sequence of interactions, and predicting
+whether they will answer the next item correctly. It is the core of any
+adaptive learning engine: the learner model drives the decision of what
+to teach or assess next. This study is the research core of
+\emph{AlgoVenture}, an adaptive, gamified platform for learning data
+structures and algorithms; its adaptive engine estimates per-concept
+mastery (UC6) and recommends the next exercise and difficulty (UC7), and
+it adopts the model and policy that this study finds best. Rather than
+collecting classroom data, we investigate KT for the
+programming/algorithm-learning domain on large published datasets, which
+keeps the study reproducible and the data-collection effort minimal.
+
+% ---------------------------------------------------------------------
+% Paragraph 2: The gap -- programming domain is under-studied.
+% ---------------------------------------------------------------------
+However, most KT research and public benchmarks target the mathematics
+domain (e.g., ASSISTments), while the programming/algorithm-learning
+domain is comparatively under-studied~\cite{piech2015dkt,liu2023simplekt}.
+Programming submissions carry signals absent from a simple
+correct/incorrect label---the knowledge components (KCs) a problem
+exercises and the structure of the code a student wrote.
+
+% ---------------------------------------------------------------------
+% Paragraph 3: The deeper gap -- accuracy vs. utility.
+% ---------------------------------------------------------------------
+A second, deeper gap is methodological. KT research overwhelmingly
+optimises next-step prediction accuracy (AUC), yet the link between
+predictive accuracy and the quality of the downstream instructional
+decision---which exercise to present next---is only weakly established
+in general KT, and largely unexamined for programming. A model that
+predicts responses well is not guaranteed to sequence exercises well.
+
+% ---------------------------------------------------------------------
+% Research question
+% ---------------------------------------------------------------------
+\paragraph{Research question}
+For programming-concept learning, do KT models that exploit
+programming-specific signals (knowledge-component tags and code
+structure) (a)~predict learner mastery more accurately than
+response-only models, and (b)~do those accuracy gains actually translate
+into better next-exercise sequencing---and how well do the findings
+generalise across public datasets and relative to the mathematics
+domain?
+
+% ---------------------------------------------------------------------
+% Contributions
+% ---------------------------------------------------------------------
+\paragraph{Contributions}
+This work makes the following contributions:
+\begin{itemize}
+  \item A reproducible programming-KT evaluation pipeline over
+        $\geq 2$ public datasets with standard baselines
+        (DKT, SAKT, AKT, simpleKT). \textbf{(RO1)}
+  \item A programming-domain KT variant that integrates
+        knowledge-component tags and code-structure features
+        (AST / code embeddings) on top of a strong baseline. \textbf{(RO2)}
+  \item An evaluation of predictive accuracy (AUC, RMSE) of the proposed
+        variant against the baselines. \textbf{(RO3)}
+  \item An evaluation of downstream next-exercise sequencing utility via
+        offline / simulator-based evaluation, together with an analysis
+        of how strongly predictive accuracy correlates with sequencing
+        utility. \textbf{(RO4)}
+  \item An assessment of cross-dataset and cross-domain (programming vs.
+        mathematics) generalisation, released as an open-source
+        reproducible benchmark. \textbf{(RO5)}
+\end{itemize}
+
+\paragraph{Scope}
+The study uses published datasets only; no data is self-collected.
+Beating every state-of-the-art KT model is a non-goal---the contribution
+centres on the programming domain and the prediction-vs-utility question.
+
+% ---------------------------------------------------------------------
+% Purpose of the RBL research (academic / practical / community)
+% ---------------------------------------------------------------------
+\paragraph{Purpose of the research}
+The RBL research within AlgoVenture serves three complementary purposes.
+\begin{itemize}
+  \item \textbf{Academic.} Verify whether integrating programming-specific
+        signals (code structure and knowledge-component tags) into a
+        knowledge-tracing model predicts student ability more accurately
+        than response-only baselines, and---crucially---whether any such
+        accuracy gain actually leads to better adaptive sequencing
+        (choosing the next exercise).
+  \item \textbf{Practical.} Rather than picking an off-the-shelf model
+        arbitrarily, the pipeline acts as an empirical filter: the
+        AlgoVenture platform \emph{consumes} the study's result by
+        adopting the winning model (highest evaluation score) into its
+        adaptive learning engine.
+  \item \textbf{Scientific / community contribution.} Deliver an
+        open-source benchmark pipeline that compares KT models
+        transparently on public educational datasets (CodeWorkout,
+        FalconCode). This lets the team produce a standards-compliant
+        research report \emph{without} collecting any new classroom data.
+\end{itemize}

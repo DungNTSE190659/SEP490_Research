@@ -1,0 +1,22 @@
+# Core scientific stack
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+scikit-learn>=1.3
+pyyaml>=6.0
+
+# Deep learning (install the CUDA build matching your GPU from pytorch.org
+# if you have one; the CPU wheel below works but is slow for training).
+torch>=2.0
+
+# Plotting (for the accuracy-vs-utility figure)
+matplotlib>=3.7
+
+# NOTE on pyKT
+# ------------
+# The training wrapper (src/train_pykt.py) shells out to the pyKT toolkit,
+# which you install separately from source because it is not a stable PyPI
+# package. See README.md section "2. Install pyKT". Once installed, pyKT
+# pulls its own dependencies (wandb, etc.).
+
+EduData>=0.0.17

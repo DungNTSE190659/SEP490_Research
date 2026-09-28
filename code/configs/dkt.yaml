@@ -1,0 +1,13 @@
+# Baseline: DKT (response-only). See report Section 4.2 (RO1).
+model_name: dkt
+use_kc: true          # DKT uses KC/skill ids
+use_code: false       # response-only baseline -> no code channel
+emb_size: 100
+hidden_size: 100
+dropout: 0.2
+learning_rate: 0.001
+batch_size: 64
+num_epochs: 50
+early_stop_patience: 10
+seq_len: 200
+seed: 42

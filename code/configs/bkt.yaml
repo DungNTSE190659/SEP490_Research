@@ -1,0 +1,4 @@
+model_name: bkt
+use_kc: true
+emb_size: 100
+seed: 42

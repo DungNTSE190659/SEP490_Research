@@ -1,0 +1,24 @@
+# Python environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Data and Models
+data/
+*.pt
+*.pth
+*.zip
+*.rar
+*.gz
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Output results (optional, you may want to commit LaTeX tables though)
+results*/
+*.json
+!configs/*.json
