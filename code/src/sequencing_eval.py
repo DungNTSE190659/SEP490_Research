@@ -39,11 +39,11 @@ def random_policy(mastery_per_problem: np.ndarray) -> int:
     return int(np.random.randint(0, len(mastery_per_problem)))
 
 def mastery_threshold_policy(mastery_per_problem: np.ndarray, threshold: float = 0.85) -> int:
-    """Pick the first problem that hasn't reached the threshold.
+    """Pick a random problem that hasn't reached the threshold.
     If all reached, pick the one with the lowest mastery."""
     below_thresh = np.where(mastery_per_problem < threshold)[0]
     if len(below_thresh) > 0:
-        return int(below_thresh[0])
+        return int(np.random.choice(below_thresh))
     return int(np.argmin(mastery_per_problem))
 
 def greedy_policy(mastery_per_problem: np.ndarray) -> int:
